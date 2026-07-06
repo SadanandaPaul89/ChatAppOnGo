@@ -1,0 +1,2 @@
+Terminal Based chatapp
+Version 1: Chat App written in Golang with TCP connection established and the application runs in the terminal with the server able to handle multiple clients turned into GO routines

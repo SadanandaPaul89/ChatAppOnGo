@@ -1,34 +1,44 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"net"
 )
 
-func handleConnection(conn net.Conn) {
-	defer conn.Close()
-	clientAddr := conn.RemoteAddr().String()
-	fmt.Println("Client connected:", clientAddr)
-	defer fmt.Println("Client disconnected:", clientAddr)
-	reader := bufio.NewReader(conn)
-	for {
-		msg, err := reader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				fmt.Println("Client disconnected:", clientAddr)
-			} else {
-				fmt.Println("Error reading from client:", err)
-			}
-			return
-		}
-		//check if client disconnected
+// type Client struct {
+// 	conn     net.Conn
+// 	Username string
+// 	Addr     string
+// 	Room     string
+// }
 
-		fmt.Printf("Received message from %s: %s", clientAddr, msg)
-	}
+// var clients = make(map[string]*Client)
 
-}
+// func handleConnection(conn net.Conn) {
+// 	defer conn.Close()
+// 	clientAddr := conn.RemoteAddr().String()
+// 	fmt.Println("Client connected:", clientAddr)
+// 	reader := bufio.NewReader(conn)
+// 	for {
+// 		msg, err := reader.ReadString('\n')
+// 		if err != nil {
+// 			if err == io.EOF {
+// 				fmt.Println("Client disconnected:", clientAddr)
+// 			} else {
+// 				fmt.Println("Error reading from client:", err)
+// 			}
+// 			return
+// 		}
+
+// 		fmt.Printf("Received message from %s: %s", clientAddr, msg)
+// 		_, erre := conn.Write([]byte(msg))
+// 		if erre != nil {
+// 			fmt.Println(erre)
+// 			return
+// 		}
+// 	}
+
+// }
 
 func main() {
 	fmt.Println("Starting Chat Server on port 3001...")
