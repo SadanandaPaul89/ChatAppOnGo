@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 )
 
 func handleConnection(conn net.Conn) {
@@ -21,11 +22,24 @@ func handleConnection(conn net.Conn) {
 	fmt.Println("Client connected:", client.Addr)
 	fmt.Println("Clients Connected:", len(clients))
 	reader := bufio.NewReader(conn)
+	firstMessage, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading from client:", err)
+		return
+	}
+	if strings.HasPrefix(firstMessage, "USERNAME:") {
+		client.Username = strings.TrimSpace(strings.TrimPrefix(firstMessage, "USERNAME:"))
+	}
+	if !strings.HasPrefix(firstMessage, "USERNAME:") {
+		fmt.Println("Invalid first message from client:", client.Addr)
+		return
+	}
+	fmt.Printf("***%s has joined the chat***\n", client.Username)
 	for {
 		msg, err := reader.ReadString('\n')
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("Client disconnected:", client.Addr)
+				fmt.Printf("Client %s disconnected:", client.Username)
 				// delete(clients, client.Addr)
 				fmt.Println("Clients Remaining:", len(clients))
 			} else {
@@ -34,7 +48,7 @@ func handleConnection(conn net.Conn) {
 			return
 		}
 
-		fmt.Printf("Received message from %s: %s", client.Addr, msg)
+		fmt.Printf("[%s]: %s", client.Addr, msg)
 		broadcastMessage(client, msg)
 	}
 

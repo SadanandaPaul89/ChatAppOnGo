@@ -13,7 +13,7 @@ func (c *Client) receiveMessage() {
 			fmt.Println("Error reading from server:", err)
 			return
 		}
-		fmt.Println("Received message from server:", new)
+		fmt.Println(new)
 	}
 
 }
