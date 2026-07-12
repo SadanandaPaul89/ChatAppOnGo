@@ -1,6 +1,9 @@
 package main
 
-import "net"
+import (
+	"net"
+	"sync"
+)
 
 type Client struct {
 	Conn     net.Conn
@@ -10,3 +13,4 @@ type Client struct {
 }
 
 var clients = make(map[string]*Client)
+var clientsMutex sync.RWMutex

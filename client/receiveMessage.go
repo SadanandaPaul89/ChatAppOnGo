@@ -13,7 +13,9 @@ func (c *Client) receiveMessage() {
 			fmt.Println("Error reading from server:", err)
 			return
 		}
-		fmt.Println(new)
+		fmt.Print("\r")
+		fmt.Print(new)
+		fmt.Print("Enter text: ")
 	}
 
 }

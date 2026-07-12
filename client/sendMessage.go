@@ -12,7 +12,7 @@ func (c *Client) sendMessage() {
 	for {
 		fmt.Print("Enter text: ")
 		msg, _ := string1.ReadString('\n')
-		fmt.Println("Sending message:", msg)
+		fmt.Println(c.Username, ":", msg)
 		c.Conn.Write([]byte(msg))
 	}
 }

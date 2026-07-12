@@ -16,8 +16,14 @@ func handleConnection(conn net.Conn) {
 		Addr:     conn.RemoteAddr().String(),
 		Room:     "",
 	}
+	clientsMutex.Lock()
 	clients[client.Addr] = client
-	defer delete(clients, client.Addr)
+	clientsMutex.Unlock()
+	defer func() {
+		clientsMutex.Lock()
+		delete(clients, client.Addr)
+		clientsMutex.Unlock()
+	}() //anonymous function to remove the client from the map when the connection is closed
 	//clientAddr := conn.RemoteAddr().String()
 	fmt.Println("Client connected:", client.Addr)
 	fmt.Println("Clients Connected:", len(clients))
@@ -48,7 +54,7 @@ func handleConnection(conn net.Conn) {
 			return
 		}
 
-		fmt.Printf("[%s]: %s", client.Addr, msg)
+		fmt.Printf("[%s]: %s", client.Username, msg)
 		broadcastMessage(client, msg)
 	}
 
