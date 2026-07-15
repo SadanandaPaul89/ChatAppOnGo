@@ -23,9 +23,11 @@ func handleConnection(conn net.Conn) {
 		clientsMutex.Lock()
 		delete(clients, client.Addr)
 		clientsMutex.Unlock()
+		fmt.Printf("***%s has left the chat***\n", client.Username)                           //server log
+		broadcastSystem(client, fmt.Sprintf("***%s has left the chat***\n", client.Username)) //broadcast to all clients
 	}() //anonymous function to remove the client from the map when the connection is closed
 	//clientAddr := conn.RemoteAddr().String()
-	fmt.Println("Client connected:", client.Addr)
+	fmt.Println("Client connected:", client.Username, "from", client.Addr)
 	fmt.Println("Clients Connected:", len(clients))
 	reader := bufio.NewReader(conn)
 	firstMessage, err := reader.ReadString('\n')
@@ -40,7 +42,8 @@ func handleConnection(conn net.Conn) {
 		fmt.Println("Invalid first message from client:", client.Addr)
 		return
 	}
-	fmt.Printf("***%s has joined the chat***\n", client.Username)
+	fmt.Printf("***%s has joined the chat***\n", client.Username)                           //server log
+	broadcastSystem(client, fmt.Sprintf("***%s has joined the chat***\n", client.Username)) //broadcast to all clients
 	for {
 		msg, err := reader.ReadString('\n')
 		if err != nil {
@@ -52,6 +55,10 @@ func handleConnection(conn net.Conn) {
 				fmt.Println("Error reading from client:", err)
 			}
 			return
+		}
+		if strings.HasPrefix(msg, "/") {
+			handleCommand(client, msg)
+			continue
 		}
 
 		fmt.Printf("[%s]: %s", client.Username, msg)
