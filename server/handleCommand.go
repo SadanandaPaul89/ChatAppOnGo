@@ -26,6 +26,7 @@ func handleCommand(client *Client, msg string) {
 		return
 	}
 	switch parts[0] {
+	//text a specific user privately
 	case "/msg":
 		//handle private message
 		if len(parts) < 3 {
@@ -56,6 +57,28 @@ func handleCommand(client *Client, msg string) {
 		client.Conn.Write([]byte(fmt.Sprintf("User %s not found\n", recipient)))
 
 	case "/join":
+		//handle join room
+		if len(parts) < 2 {
+			client.Conn.Write([]byte("Usage: /join <room>\n"))
+			return
+		}
+		room := parts[1]
+		client.Room = room
+		client.Conn.Write([]byte(fmt.Sprintf("You have joined room: %s\n", room)))
+		broadcastRoomSystem(client, fmt.Sprintf("%s has joined the room: %s\n", client.Username, room))
+		return
+	}
+
+	//leave room command
+	if parts[0] == "/leave" {
+		if client.Room == "" {
+			client.Conn.Write([]byte("You are not in a room\n"))
+			return
+		}
+		broadcastRoomSystem(client, fmt.Sprintf("%s has left the room: %s\n", client.Username, client.Room))
+		client.Room = ""
+		client.Conn.Write([]byte("You have left the room\n"))
+		return
 	}
 
 }

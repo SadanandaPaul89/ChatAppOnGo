@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
+	"net/http"
 )
 
-func main() {
+func startTCPSERVER() {
 	fmt.Println("Starting Chat Server on port 3001...")
 	listener, err := net.Listen("tcp", ":3001")
 	if err != nil {
@@ -23,4 +25,13 @@ func main() {
 		go handleConnection(conn)
 	}
 
+}
+
+func main() {
+	//start tcp chat server
+	go startTCPSERVER()
+	//serve static files
+	http.Handle("/", http.FileServer(http.Dir("./web")))
+	fmt.Println("Starting web server on port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

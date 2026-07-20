@@ -1,5 +1,7 @@
 package main
 
-func broadcastRoomSystem(sender *Client, message string) {
+func broadcastRoomSystem(Sender *Client, message string) {
+	clientsMutex.RLock()
+	defer clientsMutex.RUnlock()
 
 }
